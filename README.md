@@ -181,3 +181,11 @@ Core: `express`, `cors`, `dotenv`, `node-fetch`, `bcryptjs`, `jsonwebtoken`, `mu
 ## 📄 License
 
 MIT License — see [LICENSE](LICENSE)
+
+## Demo Link
+ link:civicpulse-production.up.railway.app
+
+ 
+ ## Govt Credentials
+ username:gov_admin
+password:Admin@2024
