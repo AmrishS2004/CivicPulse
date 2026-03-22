@@ -584,7 +584,7 @@ async function tinyfishSearch(url, goal) {
     const hardTimer = setTimeout(() => {
       console.warn('  ⏱ TinyFish 90s timeout — partial:', result.length, 'chars');
       done(result);
-    }, 90000);
+    }, 20000);
 
     const processLine = (line) => {
       line = line.trim();
