@@ -19,7 +19,7 @@
 
 <br/>
 
-**[🚀 Live Demo](https://civicpulse-production.up.railway.app)** · **[📖 Docs](#-quick-start)** · **[🐛 Issues](https://github.com/AmrishS2004/CivicPulse/issues)**
+**[🚀 Live Demo](https://civicpulse-production.up.railway.app)** · **[▶️ Watch on YouTube](https://www.youtube.com/watch?v=_2nebVSYjlU)** · **[📖 Docs](#-quick-start)** · **[🐛 Issues](https://github.com/AmrishS2004/CivicPulse/issues)**
 
 <br/>
 
@@ -27,7 +27,19 @@
 
 ---
 
-## 📸 Screenshots
+## 🎬 Demo Video
+
+<div align="center">
+
+[![CivicPulse Demo](https://img.youtube.com/vi/_2nebVSYjlU/maxresdefault.jpg)](https://www.youtube.com/watch?v=_2nebVSYjlU)
+
+▶️ **[Watch the full walkthrough on YouTube](https://www.youtube.com/watch?v=_2nebVSYjlU)**
+
+*See the complete flow — from posting a government survey and uploading a policy PDF, to citizens submitting opinions and the AI generating a full decision report in real time.*
+
+</div>
+
+---
 
 > 💡 **To display images:** Add your screenshots to a `screenshots/` folder in the repo and uncomment the `<img>` tags below.
 
