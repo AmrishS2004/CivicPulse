@@ -171,28 +171,249 @@ CivicPulse is a **full-stack civic engagement platform** that connects governmen
 
 ## 🏗️ Architecture
 
+### 📁 Project Structure
+
 ```
 CivicPulse/
-├── server.js          ← Express backend (API + AI pipeline)
+├── server.js              ← Single-file Express backend (889 lines)
+│   ├── Config & env setup
+│   ├── In-memory fallback store (no DB mode)
+│   ├── InsForge REST helpers (ifGet/ifPost/ifPatch/ifDel)
+│   ├── DB auto-init (creates 4 tables on startup)
+│   ├── Auth middleware (JWT verify)
+│   ├── REST API routes (10 endpoints)
+│   ├── TinyFish SSE streaming client
+│   └── triggerAnalysis() pipeline (6 steps)
 ├── public/
-│   └── index.html     ← Full frontend (both portals, single file)
-├── .env.example       ← Environment config template
-├── package.json       ← Dependencies
-└── LICENSE
+│   └── index.html         ← Full frontend SPA (1428 lines, vanilla JS)
+│       ├── Landing page (dual portal selector)
+│       ├── Government portal (login, post survey, my surveys, connections)
+│       └── Citizen portal (login, register, browse & respond to surveys)
+├── .env.example           ← Environment variable template
+├── package.json           ← npm dependencies
+└── skills-lock.json       ← Dependency lock
 ```
+
+---
+
+### 🔄 System Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        CLIENT BROWSER                           │
+│  ┌───────────────────────┐    ┌──────────────────────────────┐  │
+│  │   Government Portal   │    │      Citizen Portal          │  │
+│  │  (dark theme)         │    │   (light theme)              │  │
+│  │  - Post surveys       │    │   - Register / Login         │  │
+│  │  - Upload PDF/DOCX    │    │   - Browse open surveys      │  │
+│  │  - View AI reports    │    │   - Submit free-text opinion │  │
+│  │  - Send follow-ups    │    │   - See AI decision result   │  │
+│  └───────────┬───────────┘    └──────────────┬───────────────┘  │
+│              │  REST + JWT Bearer Token       │                  │
+└──────────────┼────────────────────────────────┼──────────────────┘
+               │                                │
+               ▼                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   NODE.JS / EXPRESS SERVER                       │
+│                                                                 │
+│  ┌────────────────┐   ┌──────────────┐   ┌───────────────────┐ │
+│  │  Auth Layer    │   │  API Routes  │   │  AI Pipeline      │ │
+│  │                │   │              │   │  triggerAnalysis()│ │
+│  │ • JWT verify   │   │ POST /login  │   │                   │ │
+│  │ • Gov creds    │   │ POST /survey │   │ Step 1: Re-fetch  │ │
+│  │   from .env    │   │ POST /resp.  │   │ Step 2: Extract   │ │
+│  │ • bcrypt hash  │   │ POST /upload │   │         gov doc   │ │
+│  │ • 7-day tokens │   │ GET  /surveys│   │ Step 3: TinyFish  │ │
+│  └────────────────┘   │ GET  /resp.  │   │         research  │ │
+│                       │ POST /ai     │   │ Step 4: Build     │ │
+│  ┌────────────────┐   │ POST /resrch │   │         prompt    │ │
+│  │ In-Memory      │   │ PATCH/survey │   │ Step 5: TinyFish  │ │
+│  │ Fallback Store │   │ POST /shoot  │   │         AI call   │ │
+│  │ (no InsForge)  │   │ GET  /status │   │ Step 6: Save &    │ │
+│  │ mem.users[]    │   └──────────────┘   │         cache     │ │
+│  │ mem.surveys[]  │                      └───────────────────┘ │
+│  │ mem.responses[]│                                             │
+│  │ analysisCache{}│                                             │
+│  └────────────────┘                                             │
+└──────────┬────────────────────────┬───────────────┬────────────┘
+           │                        │               │
+           ▼                        ▼               ▼
+┌──────────────────┐  ┌─────────────────────┐  ┌───────────────┐
+│   InsForge DB    │  │  Anthropic Claude   │  │  TinyFish AI  │
+│ (Cloud Postgres) │  │  (AI Proxy /api/ai) │  │  (SSE stream) │
+│                  │  │                     │  │               │
+│  cp_users        │  │  claude-sonnet-4    │  │ Wikipedia     │
+│  cp_surveys      │  │  max_tokens: 1000   │  │ scraping for  │
+│  cp_responses    │  │  JWT-gated proxy    │  │ real-world    │
+│  cp_analysis     │  │                     │  │ precedents    │
+│  (20 chunks)     │  └─────────────────────┘  └───────────────┘
+└──────────────────┘
+```
+
+---
+
+### 🗄️ Database Design (InsForge / PostgreSQL)
+
+CivicPulse auto-creates all tables on startup and drops+recreates them to ensure correct column types.
+
+```
+cp_users
+├── id            uuid        PK (auto)
+├── username      string      NOT NULL, UNIQUE
+├── password_hash string      NOT NULL  ← bcrypt $2a$10$...
+├── created_at    datetime
+└── updated_at    datetime
+
+cp_surveys
+├── id               uuid      PK (auto)
+├── question         string    NOT NULL
+├── author           string    NOT NULL  ← gov officer username
+├── target_responses integer             ← min responses before AI fires
+├── context_json     string              ← JSON array with [GOV_DOC]: prefix
+├── status           string              ← 'active' | 'complete'
+├── analysis_json    string              ← legacy (unused, see cp_analysis)
+└── published_at     datetime
+
+cp_responses
+├── id           uuid      PK (auto)
+├── survey_id    string    FK → cp_surveys.id
+├── username     string    FK → cp_users.username
+├── answer       string    NOT NULL  ← free-text citizen opinion
+└── submitted_at datetime
+
+cp_analysis                          ← AI report stored in 20 chunks
+├── id           uuid      PK (auto)
+├── survey_id    string    UNIQUE FK → cp_surveys.id
+├── chunk_0      string    ← 250 chars of JSON
+├── chunk_1      string
+├── ...
+├── chunk_19     string    ← up to 5000 chars total JSON
+└── created_at   datetime
+```
+
+> **Why chunking?** InsForge string columns max out at ~255 chars. The AI report JSON can be 2000–5000 chars, so it's split into 20 × 250-char chunks on write and reassembled on read via `toChunks()` / `fromChunks()`.
+
+> **Dual-mode storage:** If `INSFORGE_URL` is not set, the server falls back to a plain in-memory JS object (`mem.users`, `mem.surveys`, `mem.responses`) so the app works without any database configured.
+
+---
+
+### 🔐 Authentication Flow
+
+```
+Government Login                    Citizen Login / Register
+─────────────────                   ────────────────────────
+POST /api/auth/gov-login            POST /api/auth/register
+  username + password                 username + password
+       │                                     │
+       ▼                                     ▼
+  Check GOV_CREDS{}               bcrypt.hash(password, 10)
+  (hardcoded in .env)             → store in cp_users (InsForge)
+       │                                     │
+       ▼                                     ▼
+  jwt.sign({ role:'government' }) jwt.sign({ role:'citizen' })
+       │                                     │
+       └─────────── 7-day JWT ───────────────┘
+                        │
+                        ▼
+              Bearer token in Authorization header
+              → auth() middleware verifies on every
+                protected route (surveys, responses,
+                uploads, AI proxy, analysis trigger)
+```
+
+---
+
+### 🤖 AI Analysis Pipeline — Deep Dive
+
+Triggered automatically when `responses.length >= target_responses`, or manually via the government portal button.
+
+```
+triggerAnalysis(survey, responses)
+│
+├── STEP 1 — Re-fetch fresh data
+│   └── GET /cp_surveys/:id + GET /cp_responses?survey_id=eq.:id
+│       (ensures latest data even if called with stale input)
+│
+├── STEP 2 — Extract government policy document
+│   └── Parse survey.context_json (JSON array)
+│       Find message with role:'system' and content starting '[GOV_DOC]:'
+│       Extract up to 3000 chars as govDocSnippet
+│
+├── STEP 3 — TinyFish Wikipedia research (two parallel lookups)
+│   ├── Search Wikipedia for policy precedents
+│   │   → "real countries that implemented similar policies,
+│   │      statistics, measurable outcomes, lessons learned"
+│   └── Search Wikipedia for environmental/social impact data
+│       → SSE stream from https://agent.tinyfish.ai/v1/automation/run-sse
+│          20s hard timeout, processes data: events line-by-line
+│
+├── STEP 4 — Build comprehensive analysis prompt
+│   └── Combines: survey question + gov doc snippet (3000 chars)
+│               + citizen opinions (numbered list)
+│               + Wikipedia precedent data (1000 chars)
+│               + impact data (1000 chars)
+│       Requests strict JSON output (no markdown, 23-field schema)
+│
+├── STEP 5 — TinyFish AI call
+│   └── Sends full prompt to TinyFish as 'goal'
+│       Parses JSON from SSE COMPLETE event
+│       Falls back to regex JSON extraction if parsing fails
+│       Falls back to rule-based sentiment analysis if TinyFish fails
+│       (counts support/oppose keywords in citizen answers)
+│
+└── STEP 6 — Save & cache
+    ├── analysisCache[survey.id] = analysisJson  ← in-memory (instant access)
+    ├── saveAnalysisToIF() → toChunks() → INSERT/UPDATE cp_analysis
+    └── PATCH cp_surveys/:id { status: 'complete' }
+```
+
+**Analysis JSON schema (23 fields):**
+```json
+{
+  "final_decision": "2-3 sentence AI recommendation",
+  "government_intent": "what the government wants to achieve",
+  "government_concern": "core problem being solved",
+  "citizen_emotions": "emotional tone of responses",
+  "citizen_concerns": "main citizen issues raised",
+  "sentiment_breakdown": {
+    "support_percent": 60,
+    "oppose_percent": 30,
+    "neutral_percent": 10,
+    "support_reasons": ["..."],
+    "oppose_reasons": ["..."]
+  },
+  "conflict_analysis": "where gov intent and citizen needs clash",
+  "win_win_solution": "creative solution satisfying both sides",
+  "alternative_approaches": [{ "name": "", "description": "", "benefits": "", "tradeoffs": "" }],
+  "recommended_course_of_action": ["Step 1", "Step 2", "..."],
+  "statistics": {
+    "key_stats": ["stat with number"],
+    "comparable_cases": ["real city + outcome"],
+    "projected_impact": "expected outcome"
+  },
+  "pros": ["..."],
+  "cons": ["..."],
+  "environmental_social_factors": "context",
+  "urgency": "LOW | MEDIUM | HIGH",
+  "confidence": 85
+}
+```
+
+---
 
 ### 🛠 Tech Stack
 
-| Layer | Technology |
-|---|---|
-| **Backend** | Node.js + Express |
-| **Frontend** | Vanilla HTML/CSS/JS (single-page app) |
-| **Database** | InsForge (Cloud PostgreSQL REST API) |
-| **AI Analysis** | Claude AI via Anthropic API |
-| **Web Research** | TinyFish AI (Wikipedia scraping) |
-| **Auth** | JWT + bcryptjs |
-| **File Upload** | multer + pdf-parse + mammoth |
-| **Deployment** | Railway |
+| Layer | Technology | Details |
+|---|---|---|
+| **Backend** | Node.js 18+ + Express | Single `server.js`, 889 lines |
+| **Frontend** | Vanilla HTML/CSS/JS | Single `index.html` SPA, 1428 lines, no framework |
+| **Database** | InsForge (Cloud PostgreSQL) | REST API, auto-provisioned tables, chunked JSON storage |
+| **AI Analysis** | TinyFish AI | SSE streaming, Wikipedia scraping, 20s timeout |
+| **AI Proxy** | Anthropic Claude (Sonnet 4) | JWT-gated `/api/ai` proxy endpoint |
+| **Auth** | JWT + bcryptjs | 7-day tokens, cost-10 bcrypt, role-based (gov/citizen) |
+| **File Upload** | multer + pdf-parse + mammoth | PDF & DOCX → up to 15,000 chars extracted |
+| **Deployment** | Railway | Auto-deploy from GitHub, env vars via Railway dashboard |
+| **In-memory fallback** | Plain JS objects | Works without any database if InsForge not configured |
 
 ---
 
