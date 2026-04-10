@@ -46,103 +46,105 @@
 <table>
   <tr>
     <td align="center" width="50%">
-      <-- <img src="Images_1/Civic Pluse Front Page.jpeg" width="100%" alt="Landing Page"/> -->
+       <img src="Images_1/Civic Pluse Front Page.jpeg" width="100%" alt="Landing Page"/> 
       <strong>🏠 1. Landing Page</strong><br/>
       <em>The entry point of CivicPulse — choose between the Government Portal (dark) or Citizen Portal (light) to get started</em>
     </td>
     <td align="center" width="50%">
-      <!-- <img src="screenshots/02_gov_login.png" width="100%" alt="Government Portal Login"/> -->
+       <img src="Images_1/Gov Portal View.jpeg" width="100%" alt="Government Portal Login"/>
       <strong>🔐 2. Government Portal Login</strong><br/>
       <em>Secure, pre-authorised officer authentication — no public registration allowed; credentials are configured by the system administrator</em>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <!-- <img src="screenshots/03_gov_post_survey.png" width="100%" alt="Gov Portal - Post Survey Tab"/> -->
+       <img src="Images_1/Gov Portal Inside View_1.jpeg" width="100%" alt="Gov Portal - Post Survey Tab"/> 
       <strong>📋 3. Government Portal — Post Survey</strong><br/>
       <em>Officers write a policy question, optionally upload a supporting PDF/DOCX, and set the minimum citizen response target before publishing</em>
     </td>
     <td align="center">
-      <!-- <img src="screenshots/04_gov_my_surveys.png" width="100%" alt="Gov Portal - My Surveys Tab"/> -->
+      <img src="Images_1/Gov_Portal_Inside View_2.jpeg" width="100%" alt="Gov Portal - My Surveys Tab"/>
       <strong>📂 4. Government Portal — My Surveys</strong><br/>
       <em>Dashboard showing all published surveys with live response counts and completion status — empty state before any surveys are posted</em>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <!-- <img src="screenshots/05_gov_connections.png" width="100%" alt="Gov Portal - Service Connections"/> -->
+      <img src="Images_1/Gov_Portal Inside_View_3.jpeg" width="100%" alt="Gov Portal - Service Connections"/> 
       <strong>🔗 5. Government Portal — Service Connections</strong><br/>
       <em>Real-time health status of all integrated services — Claude AI, InsForge Database, TinyFish Research, and the CivicPulse server, all confirmed online</em>
     </td>
     <td align="center">
-      <!-- <img src="screenshots/06_citizen_login.png" width="100%" alt="Citizen Portal Sign In"/> -->
+      <img src="Images_1/Citizen_Protal Login View.jpeg" width="100%" alt="Citizen Portal Sign In"/>
       <strong>🗳️ 6. Citizen Portal — Sign In</strong><br/>
       <em>Citizens sign in with their registered username and password to access and respond to open government surveys</em>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <!-- <img src="screenshots/07_citizen_register.png" width="100%" alt="Citizen Portal - Create Account"/> -->
+      <img src="Images_1/Creating a Account in citizen portal.jpeg" width="100%" alt="Citizen Portal - Create Account"/>
       <strong>✍️ 7. Citizen Portal — Create Account</strong><br/>
       <em>New citizens register with a unique username and password (min. 6 characters) — passwords are bcrypt-hashed before storage</em>
     </td>
     <td align="center">
-      <!-- <img src="screenshots/08_citizen_no_surveys.png" width="100%" alt="Citizen Portal - No Surveys Yet"/> -->
+      <img src="Images_1/Citizen Portal without Question displayed or no posting from the gov.jpeg" width="100%" alt="Citizen Portal - No Surveys Yet"/>
       <strong>🔍 8. Citizen Portal — Awaiting Government Posts</strong><br/>
       <em>The citizen dashboard before any surveys are published — surveys appear here automatically once a government officer posts one</em>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <!-- <img src="screenshots/09_gov_survey_with_pdf.png" width="100%" alt="Gov Portal - Survey with PDF Uploaded"/> -->
+      <img src="Images_1/Gov Portal after adding a survey question and pdf.jpeg" width="100%" alt="Gov Portal - Survey with PDF Uploaded"/>
       <strong>📄 9. Government Portal — Survey with PDF Attached</strong><br/>
       <em>A policy question filled in and a PDF uploaded (7k characters extracted) — AI will read the document to deeply understand government intent before analysis</em>
     </td>
     <td align="center">
-      <!-- <img src="screenshots/10_gov_survey_published.png" width="100%" alt="Gov Portal - Survey Published, Collecting Opinions"/> -->
+      <img src="Images_1/Gov Portal after Adding Survey Question to the Citizen.jpeg" width="100%" alt="Gov Portal - Survey Published, Collecting Opinions"/>
       <strong>📡 10. Government Portal — Survey Published & Collecting Opinions</strong><br/>
       <em>The survey is now live with 1 post recorded; the system waits for the target number of citizen responses before auto-triggering AI analysis</em>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <!-- <img src="screenshots/11_citizen_active_survey.png" width="100%" alt="Citizen Portal - Active Survey Available"/> -->
+      <img src="Images_1/Citizen Portal after the survey question is added in the POrtal.jpeg" width="100%" alt="Citizen Portal - Active Survey Available"/>
       <strong>💬 11. Citizen Portal — Active Survey Ready for Response</strong><br/>
       <em>The government's published survey appears in the citizen dashboard; citizens write their opinion in free text — AI understands the full reasoning, not just keywords</em>
     </td>
     <td align="center">
-      <!-- <img src="screenshots/12_gov_run_analysis.png" width="100%" alt="Gov Portal - Run Analysis Button"/> -->
+      <img src="Images_1/After Getting the targeted response we will get a run analysis button.jpeg" width="100%" alt="Gov Portal - Run Analysis Button"/>
       <strong>⚡ 12. Government Portal — Target Reached, Run Analysis</strong><br/>
       <em>Once the minimum response target is met (2/2 here), the "Run Analysis with N Responses Now" button appears — government can trigger the AI pipeline on demand</em>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <!-- <img src="screenshots/13_insforge_surveys.png" width="100%" alt="InsForge - cp_surveys table"/> -->
+      <img src="Images_1/This is from Insforg Portal this pic shows the The governmental login and question posted from the gov.jpeg" width="100%" alt="InsForge - cp_surveys table"/>
       <strong>🗄️ 13. InsForge DB — cp_surveys Table</strong><br/>
       <em>The government-posted survey persisted in InsForge cloud database, showing the survey ID, question text, author (Amrish), response target, and attached policy document JSON</em>
     </td>
     <td align="center">
-      <!-- <img src="screenshots/14_insforge_users.png" width="100%" alt="InsForge - cp_users table"/> -->
+      <img src="Images_1/This shows the Login and Hased password of the user who is log in through the Citze Portal.jpeg" width="100%" alt="InsForge - cp_users table"/>
       <strong>👤 14. InsForge DB — cp_users Table (Citizen Accounts)</strong><br/>
       <em>Registered citizen accounts stored in InsForge — passwords are securely bcrypt-hashed ($2a$10$...) and never stored in plain text</em>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <!-- <img src="screenshots/15_insforge_responses.png" width="100%" alt="InsForge - cp_responses table"/> -->
+       <img src="Images_1/This Shows the The answer of the citizen for the survey Question.jpeg" width="100%" alt="InsForge - cp_responses table"/> 
       <strong>📝 15. InsForge DB — cp_responses Table (Citizen Answers)</strong><br/>
       <em>Each citizen's free-text response stored with their username, linked survey ID, and submission timestamp — this raw data feeds directly into the AI analysis pipeline</em>
     </td>
     <td align="center">
-      <!-- <img src="screenshots/16_insforge_analysis.png" width="100%" alt="InsForge - cp_analysis table"/> -->
+      <img src="Images_1/This Shows the Final output that is saved in in Insforge.jpeg" width="100%" alt="InsForge - cp_analysis table"/>
       <strong>💾 16. InsForge DB — cp_analysis Table (AI Output Persisted)</strong><br/>
       <em>The full AI decision report saved as 20 chunked string columns in InsForge — ensuring the analysis survives server restarts and remains accessible at any time</em>
     </td>
   </tr>
   <tr>
     <td align="center" colspan="2">
-      <!-- <img src="screenshots/17_gov_ai_report.png" width="60%" alt="Gov Portal - AI Decision Report"/> -->
+      <img src="Images_1/Output.jpeg" width="100%" alt="Gov Portal - AI Decision Report"/>
+      <img src="Images_1/Output_2.jpeg" width="100%" alt="Gov Portal - AI Decision Report"/>
+      <img src="Images_1/Output_3.jpeg" width="100%" alt="Gov Portal - AI Decision Report"/>
       <strong>🏆 17. Government Portal — Live AI Decision Report</strong><br/>
       <em>The complete AI-generated decision report displayed in the Government Portal: citizen sentiment bar (50% support / 50% neutral), win-win solution, recommended course of action, key statistics, urgency level, confidence score, and a "View Full Report" button — all deployed live at <a href="https://civicpulse-production.up.railway.app">civicpulse-production.up.railway.app</a></em>
     </td>
@@ -567,7 +569,24 @@ Core: `express` · `cors` · `dotenv` · `node-fetch` · `bcryptjs` · `jsonwebt
 [![GitHub](https://img.shields.io/badge/GitHub-AmrishS2004-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/AmrishS2004)
 
 </div>
+<div align="center">
 
+**Aravind Chidambaram**
+
+[![Email](https://img.shields.io/badge/Email-Aravindan.2699@gmail.com-D14836?style=flat-square&logo=gmail&logoColor=white)](mailto:Aravindan.2699@gmail.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-aravindanchidambaram-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/aravindanchidambaram/)
+[![GitHub](https://img.shields.io/badge/GitHub-AravindanC7-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/AravindanC7)
+
+</div>
+<div align="center">
+
+**Nandita Ramkrishnan**
+
+[![Email](https://img.shields.io/badge/Email-nandita.ramkrishnan@gmail.com-D14836?style=flat-square&logo=gmail&logoColor=white)](mailto:nandita.ramkrishnan@gmail.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Nandiata--R-0077B5?style=flat-square&logo=linkedin&logoColor=white)](www.linkedin.com/in/nandita-r)
+[![GitHub](https://img.shields.io/badge/GitHub-Nanditaramakrishnan-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/Nanditaramakrishnan)
+
+</div>
 ---
 
 ## 📄 License
@@ -578,7 +597,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 <div align="center">
 
-Made with ❤️ by Amrish Sasikumar · Powered by Claude AI · InsForge · TinyFish
+Made with ❤️ by Amrish Sasikumar, Aravind · Powered by Claude AI · InsForge · TinyFish
 
 ⭐ **Star this repo if you found it useful!**
 
