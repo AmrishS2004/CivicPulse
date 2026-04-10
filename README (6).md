@@ -46,7 +46,7 @@
 <table>
   <tr>
     <td align="center" width="50%">
-      <!-- <img src="screenshots/01_landing.png" width="100%" alt="Landing Page"/> -->
+      <-- <img src="Images_1/Civic Pluse Front Page.jpeg" width="100%" alt="Landing Page"/> -->
       <strong>🏠 1. Landing Page</strong><br/>
       <em>The entry point of CivicPulse — choose between the Government Portal (dark) or Citizen Portal (light) to get started</em>
     </td>
