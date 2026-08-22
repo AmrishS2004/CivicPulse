@@ -602,3 +602,43 @@ Made with ❤️ by Amrish Sasikumar, Aravind · Powered by Claude AI · InsForg
 ⭐ **Star this repo if you found it useful!**
 
 </div>
+
+## Technical Documentation
+
+### Database Schema
+
+The PostgreSQL database was designed with the following table structure to support the platform's core functionality:
+
+**cp_users** - Stores user authentication and profile data
+- Handles JWT-based authentication
+- Tracks user roles (citizen, government official)
+
+**cp_surveys** - Government survey posts
+- Stores survey metadata, topic, and response requirements
+- Linked to creating user via foreign key
+
+**cp_responses** - Citizen survey responses
+- Chunked storage design for handling large response volumes
+- Timestamped for time-series analysis
+
+**cp_analysis** - AI-generated analysis reports
+- Stores 23-field JSON analysis output
+- Chunked storage to handle large JSON reports efficiently
+
+### AI Analysis Pipeline
+
+The Claude AI integration processes citizen survey responses through a structured analysis pipeline:
+
+1. **Response Aggregation** - Collects all citizen responses for a given survey
+2. **Sentiment Classification** - Categorizes responses into support/oppose/neutral with confidence scoring
+3. **Conflict Analysis** - Identifies opposing viewpoints and potential compromise areas
+4. **Win-Win Recommendation** - Generates policy recommendations that address multiple stakeholder concerns
+5. **Structured Output** - Returns a 23-field JSON decision report
+
+### Prompt Engineering Approach
+
+The AI prompts were designed with specific constraints to ensure consistent output:
+- Explicit JSON schema enforcement for reliable parsing
+- Chain-of-thought reasoning for complex policy analysis
+- Structured field definitions to prevent hallucination
+- Confidence scoring for sentiment classifications
